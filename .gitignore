@@ -1,6 +1,9 @@
 /.devcontainer
 /docker-compose.override.yml
 
+# Docker build: обход credsStore — папка создаётся run.sh, не коммитить
+/.docker-build
+
 # VSCode specific
 *.code-workspace
 /.vscode

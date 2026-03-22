@@ -26,10 +26,12 @@ services:
   auto: &automatic
     <<: *base_service
     profiles: ["auto"]
-    build: ./services/AUTOMATIC1111
+    build:
+      context: ./services/AUTOMATIC1111
+      network: host
     image: sd-auto:78
     environment:
-      - CLI_ARGS=--allow-code --medvram --xformers --enable-insecure-extension-access --api
+      - CLI_ARGS=--allow-code --xformers --enable-insecure-extension-access --api
 
   auto-cpu:
     <<: *automatic

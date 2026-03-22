@@ -1,11 +1,16 @@
 FROM alpine/git:2.36.2 as download
 
+# Отключаем интерактивный запрос учётных данных (WSL2/Docker)
+ENV GIT_TERMINAL_PROMPT=0
+
 COPY clone.sh /clone.sh
 
 RUN . /clone.sh stable-diffusion-webui-assets https://github.com/AUTOMATIC1111/stable-diffusion-webui-assets.git 6f7db241d2f8ba7457bac5ca9753331f0c266917
 
-RUN . /clone.sh stable-diffusion-stability-ai https://github.com/Stability-AI/stablediffusion.git cf1d67a6fd5ea1aa600c4df58e5b47da45f6bdbf \
-  && rm -rf assets data/**/*.png data/**/*.jpg data/**/*.gif
+# Форк w-e-w — официальная замена Stability-AI/stablediffusion (404 с ~дек 2025)
+# См. AUTOMATIC1111/stable-diffusion-webui#17235, discussion #17212, AbdBarho#657
+RUN . /clone.sh stable-diffusion-stability-ai https://github.com/w-e-w/stablediffusion.git cf1d67a6fd5ea1aa600c4df58e5b47da45f6bdbf \
+  && rm -rf assets data
 
 RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f14c9f7a5b4813144b2fb9
 RUN . /clone.sh k-diffusion https://github.com/crowsonkb/k-diffusion.git ab527a9a6d347f364e3d185ba6d714e22d80cb3c
@@ -16,7 +21,7 @@ RUN . /clone.sh stable-diffusion-webui-assets https://github.com/AUTOMATIC1111/s
 
 FROM pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime
 
-ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1
+ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1 GIT_TERMINAL_PROMPT=0
 
 RUN --mount=type=cache,target=/var/cache/apt \
   apt-get update && \
